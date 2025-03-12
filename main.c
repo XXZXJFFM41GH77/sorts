@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <assert.h>
 
 #define TYPE long long int
 
@@ -31,8 +32,8 @@ void quick_sort(int n, TYPE *array) {
     if(n <= 1) {
         return;
     }
-    int i = 0, j = n - 1;
     // partition on middle element
+    int i = 0, j = n - 1;
     TYPE x = array[(n -1)/ 2];
     while(1) {
         comparison_counter++;
@@ -78,25 +79,35 @@ TYPE *generate_array(int type, int n) {
     return array;
 }
 
+void assert_sorted(int n, TYPE *array) {
+    for(int i = 1; i < n; i++) {
+        assert(array[i - 1] <= array[i]);
+    }
+}
+
 int SIZES[4] = {10, 100, 1000, 10000};
 
 int main(void) {
     srand(time(0));
     for(size_t s = 0; s < sizeof(SIZES) / sizeof(SIZES[0]); s++) {
-        printf("Amount of elements: %d\n", SIZES[s]);
+        int n = SIZES[s];
+        printf("Amount of elements: %d\n", n);
         for(int type = 1; type <= 4; type++) {
             printf(" Type: %d\n", type);
+
             comparison_counter = 0;
             swap_counter = 0;
-            TYPE *array = generate_array(type, SIZES[s]);
-            choice_sort(SIZES[s], array);
+            TYPE *array = generate_array(type, n);
+            choice_sort(n, array);
+            assert_sorted(n, array);
             free(array);
             printf("  Choice sort:\n   Comparisons: %d\n   Swaps: %d\n", comparison_counter, swap_counter);
 
             comparison_counter = 0;
             swap_counter = 0;
-            array = generate_array(type, SIZES[s]);
-            quick_sort(SIZES[s], array);
+            array = generate_array(type, n);
+            quick_sort(n, array);
+            assert_sorted(n, array);
             free(array);
             printf("  Quick sort:\n   Comparisons: %d\n   Swaps: %d\n", comparison_counter, swap_counter);
         }
